@@ -1,0 +1,64 @@
+<div class="container">
+  <h1>Recaudos de Vehículos</h1>
+  <p class="subtitle">Sistema de consulta - Reto F2X</p>
+
+  <!-- Filtros -->
+  <div class="filtros-panel">
+    <h3>Filtros</h3>
+    <div class="filtros-grid">
+      <div class="filtro-item">
+        <label>Estación:</label>
+        <input type="text" [(ngModel)]="filtroEstacion" (input)="aplicarFiltros()" placeholder="Buscar..."/>
+      </div>
+
+      <div class="filtro-item">
+        <label>Sentido:</label>
+        <input type="text" [(ngModel)]="filtroSentido" (input)="aplicarFiltros()" placeholder="Buscar..."/>
+      </div>
+
+      <div class="filtro-item">
+        <label>Categoría:</label>
+        <input type="text" [(ngModel)]="filtroCategoria" (input)="aplicarFiltros()" placeholder="Buscar..."/>
+      </div>
+
+      <div class="filtro-item">
+        <button (click)="limpiarFiltros()" class="btn-limpiar">Limpiar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Resultados -->
+  <p>Mostrando <strong>{{ recaudosFiltrados.length }}</strong> de <strong>{{ recaudos.length }}</strong> registros</p>
+
+  <!-- Loading -->
+  <div *ngIf="cargando">Cargando datos...</div>
+
+  <!-- Error -->
+  <div *ngIf="error">{{ error }}</div>
+
+  <!-- Tabla -->
+  <div class="tabla-container" *ngIf="!cargando && !error">
+    <table class="data-grid">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Estación</th>
+          <th>Sentido</th>
+          <th>Fecha/Hora</th>
+          <th>Categoría</th>
+          <th>Valor</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let r of recaudosFiltrados">
+          <td>{{ r.id }}</td>
+          <td>{{ r.estacion }}</td>
+          <td>{{ r.sentido }}</td>
+          <td>{{ formatearFecha(r.hora) }}</td>
+          <td>{{ r.categoria }}</td>
+          <td class="valor">{{ formatearValor(r.valorTabulado) }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

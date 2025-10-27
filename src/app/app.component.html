@@ -1,0 +1,19 @@
+<div style="padding: 20px;">
+  <div style="margin-bottom: 20px;">
+    <button 
+      (click)="vistaActual = 'grid'" 
+      [style.background]="vistaActual === 'grid' ? '#3498db' : '#95a5a6'" 
+      style="padding: 10px 20px; color: white; border: none; margin-right: 10px; cursor: pointer; border-radius: 4px; font-weight: 500;">
+      Datos Brutos
+    </button>
+    <button 
+      (click)="vistaActual = 'reporte'" 
+      [style.background]="vistaActual === 'reporte' ? '#3498db' : '#95a5a6'" 
+      style="padding: 10px 20px; color: white; border: none; cursor: pointer; border-radius: 4px; font-weight: 500;">
+      Reporte Mensual
+    </button>
+  </div>
+  
+  <app-recaudos-grid *ngIf="vistaActual === 'grid'"></app-recaudos-grid>
+  <app-reporte-mensual *ngIf="vistaActual === 'reporte'"></app-reporte-mensual>
+</div>

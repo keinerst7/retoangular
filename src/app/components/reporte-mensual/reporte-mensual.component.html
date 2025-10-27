@@ -1,0 +1,101 @@
+<div class="container">
+  <h1>Reporte Mensual de Recaudos</h1>
+  <p class="subtitle">Agrupado por Estación y Fecha</p>
+
+  <!-- Selectores de Período -->
+  <div class="filtros-panel">
+    <h3>Seleccionar Período</h3>
+    <div class="filtros-grid">
+      <div class="filtro-item">
+        <label>Año:</label>
+        <select [(ngModel)]="anioSeleccionado" (change)="cargarReporte()">
+          <option *ngFor="let anio of anios" [value]="anio">{{ anio }}</option>
+        </select>
+      </div>
+
+      <div class="filtro-item">
+        <label>Mes:</label>
+        <select [(ngModel)]="mesSeleccionado" (change)="cargarReporte()">
+          <option *ngFor="let mes of meses" [value]="mes.valor">{{ mes.nombre }}</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="cargando" class="loading">Cargando reporte...</div>
+
+  <!-- Error -->
+  <div *ngIf="error" class="error">{{ error }}</div>
+
+  <!-- Resumen -->
+  <div *ngIf="reporte && !cargando" class="resumen-panel">
+    <h3>Resumen del Período: {{ reporte.periodo }}</h3>
+    <div class="resumen-grid">
+      <div class="resumen-item">
+        <span class="resumen-label">Total Estaciones:</span>
+        <span class="resumen-valor">{{ reporte.totalEstaciones }}</span>
+      </div>
+      <div class="resumen-item">
+        <span class="resumen-label">Total Días:</span>
+        <span class="resumen-valor">{{ reporte.totalDias }}</span>
+      </div>
+      <div class="resumen-item">
+        <span class="resumen-label">Total Vehículos:</span>
+        <span class="resumen-valor">{{ reporte.totalVehiculos | number }}</span>
+      </div>
+      <div class="resumen-item">
+        <span class="resumen-label">Total Recaudado:</span>
+        <span class="resumen-valor valor-destacado">{{ formatearValor(reporte.totalRecaudado) }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabla de Reporte -->
+  <div *ngIf="reporte && !cargando" class="tabla-container">
+    <div *ngFor="let grupo of estacionesAgrupadas" class="estacion-grupo">
+      <h3 class="estacion-titulo">Estación {{ grupo.estacion }}</h3>
+      
+      <table class="data-grid">
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Total Cant</th>
+            <th>Total Valor</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let detalle of grupo.datos">
+            <td>{{ formatearFecha(detalle.fecha) }}</td>
+            <td class="text-center">{{ detalle.totalVehiculos }}</td>
+            <td class="valor">{{ formatearValor(detalle.totalRecaudado) }}</td>
+          </tr>
+          <tr class="fila-total">
+            <td><strong>Total {{ grupo.estacion }}</strong></td>
+            <td class="text-center"><strong>{{ getTotalPorEstacion(grupo.datos).vehiculos }}</strong></td>
+            <td class="valor"><strong>{{ formatearValor(getTotalPorEstacion(grupo.datos).recaudado) }}</strong></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Totales Generales -->
+    <div class="totales-generales">
+      <h3>Totales Generales</h3>
+      <table class="data-grid">
+        <thead>
+          <tr>
+            <th>Total Cant</th>
+            <th>Total Valor</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="fila-total-general">
+            <td class="text-center"><strong>{{ reporte.totalVehiculos | number }}</strong></td>
+            <td class="valor"><strong>{{ formatearValor(reporte.totalRecaudado) }}</strong></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
