@@ -17,13 +17,7 @@ interface DetalleReporte {
   fecha: string;
   totalVehiculos: number;
   totalRecaudado: number;
-  categorias: Categoria[];
-}
-
-interface Categoria {
-  categoria: string;
-  cantidad: number;
-  total: number;
+  categorias?: any[];
 }
 
 @Component({
@@ -38,9 +32,9 @@ export class ReporteMensualComponent implements OnInit {
   cargando = false;
   error = '';
   
-  anioSeleccionado = 2024;  
+  anioSeleccionado = 2024;
   mesSeleccionado = 6;
-  
+
   meses = [
     { valor: 1, nombre: 'Enero' },
     { valor: 2, nombre: 'Febrero' },
@@ -53,8 +47,8 @@ export class ReporteMensualComponent implements OnInit {
     { valor: 9, nombre: 'Septiembre' },
     { valor: 10, nombre: 'Octubre' }
   ];
-  
-  anios = [2024]; 
+
+  anios = [2024];
 
   constructor(private http: HttpClient) {}
 
@@ -65,9 +59,9 @@ export class ReporteMensualComponent implements OnInit {
   cargarReporte(): void {
     this.cargando = true;
     this.error = '';
-    
+
     const url = `http://localhost:5187/api/Recaudos/reporte-mensual?año=${this.anioSeleccionado}&mes=${this.mesSeleccionado}`;
-    
+
     this.http.get<ReporteMensual>(url).subscribe({
       next: (data) => {
         this.reporte = data;
@@ -98,28 +92,41 @@ export class ReporteMensualComponent implements OnInit {
     });
   }
 
-  get estacionesAgrupadas(): { estacion: string; datos: DetalleReporte[] }[] {
+  // Obtener lista única de estaciones
+  get estaciones(): string[] {
     if (!this.reporte) return [];
-    
-    const grupos = new Map<string, DetalleReporte[]>();
-    
-    this.reporte.detalle.forEach(item => {
-      if (!grupos.has(item.estacion)) {
-        grupos.set(item.estacion, []);
-      }
-      grupos.get(item.estacion)!.push(item);
-    });
-    
-    return Array.from(grupos.entries()).map(([estacion, datos]) => ({
-      estacion,
-      datos: datos.sort((a, b) => new Date(a.fecha).getTime() - new Date(b.fecha).getTime())
-    }));
+    const estaciones = new Set<string>();
+    this.reporte.detalle.forEach(d => estaciones.add(d.estacion));
+    return Array.from(estaciones).sort();
   }
 
-  getTotalPorEstacion(datos: DetalleReporte[]): { vehiculos: number; recaudado: number } {
+  // Obtener lista única de fechas
+  get fechas(): string[] {
+    if (!this.reporte) return [];
+    const fechas = new Set<string>();
+    this.reporte.detalle.forEach(d => fechas.add(d.fecha));
+    return Array.from(fechas).sort();
+  }
+
+  // Obtener dato específico por estación y fecha
+  getDatosPorEstacionFecha(estacion: string, fecha: string): { vehiculos: number; recaudado: number } {
+    if (!this.reporte) return { vehiculos: 0, recaudado: 0 };
+    
+    const dato = this.reporte.detalle.find(d => d.estacion === estacion && d.fecha === fecha);
     return {
-      vehiculos: datos.reduce((sum, d) => sum + d.totalVehiculos, 0),
-      recaudado: datos.reduce((sum, d) => sum + d.totalRecaudado, 0)
+      vehiculos: dato?.totalVehiculos || 0,
+      recaudado: dato?.totalRecaudado || 0
+    };
+  }
+
+  // Obtener total por estación
+  getTotalPorEstacion(estacion: string): { vehiculos: number; recaudado: number } {
+    if (!this.reporte) return { vehiculos: 0, recaudado: 0 };
+    
+    const datosEstacion = this.reporte.detalle.filter(d => d.estacion === estacion);
+    return {
+      vehiculos: datosEstacion.reduce((sum, d) => sum + d.totalVehiculos, 0),
+      recaudado: datosEstacion.reduce((sum, d) => sum + d.totalRecaudado, 0)
     };
   }
 }

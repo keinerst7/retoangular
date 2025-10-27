@@ -1,6 +1,6 @@
 <div class="container">
   <h1>Reporte Mensual de Recaudos</h1>
-  <p class="subtitle">Agrupado por Estación y Fecha</p>
+  <p class="subtitle"></p>
 
   <!-- Selectores de Período -->
   <div class="filtros-panel">
@@ -28,61 +28,51 @@
   <!-- Error -->
   <div *ngIf="error" class="error">{{ error }}</div>
 
-  <!-- Resumen -->
-  <div *ngIf="reporte && !cargando" class="resumen-panel">
-    <h3>Resumen del Período: {{ reporte.periodo }}</h3>
-    <div class="resumen-grid">
-      <div class="resumen-item">
-        <span class="resumen-label">Total Estaciones:</span>
-        <span class="resumen-valor">{{ reporte.totalEstaciones }}</span>
-      </div>
-      <div class="resumen-item">
-        <span class="resumen-label">Total Días:</span>
-        <span class="resumen-valor">{{ reporte.totalDias }}</span>
-      </div>
-      <div class="resumen-item">
-        <span class="resumen-label">Total Vehículos:</span>
-        <span class="resumen-valor">{{ reporte.totalVehiculos | number }}</span>
-      </div>
-      <div class="resumen-item">
-        <span class="resumen-label">Total Recaudado:</span>
-        <span class="resumen-valor valor-destacado">{{ formatearValor(reporte.totalRecaudado) }}</span>
-      </div>
-    </div>
-  </div>
+  <!-- TABLA PRINCIPAL - Estructura EXACTA del PDF -->
+  <div *ngIf="reporte && !cargando" class="tabla-reporte">
+    <h3>Detalle Mensual por Estación y Fecha</h3>
+    
+    <table class="tabla-principal">
+      <thead>
+        <!-- Fila 1: Nombres de estaciones -->
+        <tr>
+          <th class="columna-fecha" rowspan="2"></th>
+          <th *ngFor="let estacion of estaciones" colspan="2" class="header-estacion">
+            {{ estacion }}
+          </th>
+        </tr>
+        <!-- Fila 2: Total Cant y Total Valor -->
+        <tr>
+          <ng-container *ngFor="let estacion of estaciones">
+            <th class="subheader">Total Cant</th>
+            <th class="subheader">Total Valor</th>
+          </ng-container>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Filas de fechas -->
+        <tr *ngFor="let fecha of fechas">
+          <td class="columna-fecha">{{ formatearFecha(fecha) }}</td>
+          <ng-container *ngFor="let estacion of estaciones">
+            <td class="text-center">{{ getDatosPorEstacionFecha(estacion, fecha).vehiculos }}</td>
+            <td class="text-right">{{ formatearValor(getDatosPorEstacionFecha(estacion, fecha).recaudado) }}</td>
+          </ng-container>
+        </tr>
+        <!-- Fila TOTAL por estación -->
+        <tr class="fila-total">
+          <td class="columna-fecha"><strong>Total</strong></td>
+          <ng-container *ngFor="let estacion of estaciones">
+            <td class="text-center"><strong>{{ getTotalPorEstacion(estacion).vehiculos }}</strong></td>
+            <td class="text-right"><strong>{{ formatearValor(getTotalPorEstacion(estacion).recaudado) }}</strong></td>
+          </ng-container>
+        </tr>
+      </tbody>
+    </table>
 
-  <!-- Tabla de Reporte -->
-  <div *ngIf="reporte && !cargando" class="tabla-container">
-    <div *ngFor="let grupo of estacionesAgrupadas" class="estacion-grupo">
-      <h3 class="estacion-titulo">Estación {{ grupo.estacion }}</h3>
-      
-      <table class="data-grid">
-        <thead>
-          <tr>
-            <th>Fecha</th>
-            <th>Total Cant</th>
-            <th>Total Valor</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let detalle of grupo.datos">
-            <td>{{ formatearFecha(detalle.fecha) }}</td>
-            <td class="text-center">{{ detalle.totalVehiculos }}</td>
-            <td class="valor">{{ formatearValor(detalle.totalRecaudado) }}</td>
-          </tr>
-          <tr class="fila-total">
-            <td><strong>Total {{ grupo.estacion }}</strong></td>
-            <td class="text-center"><strong>{{ getTotalPorEstacion(grupo.datos).vehiculos }}</strong></td>
-            <td class="valor"><strong>{{ formatearValor(getTotalPorEstacion(grupo.datos).recaudado) }}</strong></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <!-- Totales Generales -->
-    <div class="totales-generales">
-      <h3>Totales Generales</h3>
-      <table class="data-grid">
+    <!-- TABLA SECUNDARIA - Totales Generales -->
+    <div class="tabla-totales-generales">
+      <h4>Totales</h4>
+      <table class="tabla-mini">
         <thead>
           <tr>
             <th>Total Cant</th>
@@ -92,7 +82,7 @@
         <tbody>
           <tr class="fila-total-general">
             <td class="text-center"><strong>{{ reporte.totalVehiculos | number }}</strong></td>
-            <td class="valor"><strong>{{ formatearValor(reporte.totalRecaudado) }}</strong></td>
+            <td class="text-right"><strong>{{ formatearValor(reporte.totalRecaudado) }}</strong></td>
           </tr>
         </tbody>
       </table>
