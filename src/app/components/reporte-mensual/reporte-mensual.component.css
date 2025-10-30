@@ -14,7 +14,6 @@ h1 {
   margin-bottom: 30px; 
 }
 
-/* Filtros */
 .filtros-panel {
   background: #f8f9fa;
   padding: 25px;
@@ -61,7 +60,6 @@ h1 {
   border-color: #3498db;
 }
 
-/* Loading y Error */
 .loading, .error {
   text-align: center;
   padding: 40px;
@@ -80,7 +78,6 @@ h1 {
   color: #c62828;
 }
 
-/* TABLA PRINCIPAL - Estructura con cuadrículas */
 .tabla-reporte {
   margin-top: 30px;
   overflow-x: auto;
@@ -204,7 +201,6 @@ h1 {
   color: #27ae60;
 }
 
-/* Responsive */
 @media (max-width: 1200px) {
   .container {
     padding: 15px;

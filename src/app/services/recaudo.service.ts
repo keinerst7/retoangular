@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 
 export interface Recaudo {
   id: number;
@@ -12,6 +12,14 @@ export interface Recaudo {
   fechaRegistro: string;
 }
 
+interface RespuestaBackend {
+  pagina: number;
+  registrosPorPagina: number;
+  totalRegistros: number;
+  totalPaginas: number;
+  datos: Recaudo[];
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -20,9 +28,17 @@ export class RecaudoService {
 
   constructor(private http: HttpClient) { }
 
-  // Obtener todos los recaudos
-  getRecaudos(): Observable<Recaudo[]> {
-    return this.http.get<Recaudo[]>(this.apiUrl);
+  // Obtener recaudos con paginación
+  getRecaudos(pagina: number = 1, registrosPorPagina: number = 100): Observable<{ datos: Recaudo[], totalRegistros: number, totalPaginas: number, paginaActual: number }> {
+    return this.http.get<RespuestaBackend>(`${this.apiUrl}?pagina=${pagina}&registrosPorPagina=${registrosPorPagina}`)
+      .pipe(
+        map(response => ({
+          datos: response.datos || [],
+          totalRegistros: response.totalRegistros,
+          totalPaginas: response.totalPaginas,
+          paginaActual: response.pagina
+        }))
+      );
   }
 
   // Obtener recaudos por fecha

@@ -16,7 +16,13 @@ export class RecaudosGridComponent implements OnInit {
   cargando: boolean = false;
   error: string = '';
 
-  // Filtros
+  // Paginación
+  paginaActual: number = 1;
+  registrosPorPagina: number = 100;
+  totalRegistros: number = 0;
+  totalPaginas: number = 0;
+
+  // Filtros locales
   filtroEstacion: string = '';
   filtroSentido: string = '';
   filtroCategoria: string = '';
@@ -31,12 +37,15 @@ export class RecaudosGridComponent implements OnInit {
     this.cargando = true;
     this.error = '';
 
-    this.recaudoService.getRecaudos().subscribe({
-      next: (data) => {
-        this.recaudos = data;
-        this.recaudosFiltrados = data;
+    this.recaudoService.getRecaudos(this.paginaActual, this.registrosPorPagina).subscribe({
+      next: (response) => {
+        this.recaudos = response.datos;
+        this.recaudosFiltrados = response.datos;
+        this.totalRegistros = response.totalRegistros;
+        this.totalPaginas = response.totalPaginas;
+        this.paginaActual = response.paginaActual;
         this.cargando = false;
-        console.log('Recaudos cargados:', data.length);
+        console.log('Recaudos cargados:', response.datos.length, 'de', response.totalRegistros);
       },
       error: (err) => {
         this.error = 'Error al cargar los datos. Verifica que la API esté corriendo.';
@@ -66,6 +75,21 @@ export class RecaudosGridComponent implements OnInit {
     this.filtroSentido = '';
     this.filtroCategoria = '';
     this.recaudosFiltrados = this.recaudos;
+  }
+
+  // Métodos de paginación
+  paginaAnterior(): void {
+    if (this.paginaActual > 1) {
+      this.paginaActual--;
+      this.cargarRecaudos();
+    }
+  }
+
+  paginaSiguiente(): void {
+    if (this.paginaActual < this.totalPaginas) {
+      this.paginaActual++;
+      this.cargarRecaudos();
+    }
   }
 
   formatearFecha(fecha: string): string {

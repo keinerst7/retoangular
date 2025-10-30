@@ -28,7 +28,7 @@
   </div>
 
   <!-- Resultados -->
-  <p>Mostrando <strong>{{ recaudosFiltrados.length }}</strong> de <strong>{{ recaudos.length }}</strong> registros</p>
+  <p>Mostrando <strong>{{ recaudosFiltrados.length }}</strong> de <strong>{{ totalRegistros }}</strong> registros (Página {{ paginaActual }} de {{ totalPaginas }})</p>
 
   <!-- Loading -->
   <div *ngIf="cargando">Cargando datos...</div>
@@ -60,5 +60,12 @@
         </tr>
       </tbody>
     </table>
+  </div>
+
+  <!-- Controles de paginación -->
+  <div class="paginacion" *ngIf="totalPaginas > 1 && !cargando && !error">
+    <button (click)="paginaAnterior()" [disabled]="paginaActual === 1" class="btn-pagina">← Anterior</button>
+    <span class="info-pagina">Página {{ paginaActual }} de {{ totalPaginas }}</span>
+    <button (click)="paginaSiguiente()" [disabled]="paginaActual === totalPaginas" class="btn-pagina">Siguiente →</button>
   </div>
 </div>

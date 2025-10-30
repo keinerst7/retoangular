@@ -4,8 +4,15 @@
   padding: 20px;
 }
 
-h1 { color: #2c3e50; margin-bottom: 5px; }
-.subtitle { color: #7f8c8d; margin-bottom: 30px; }
+h1 { 
+  color: #2c3e50; 
+  margin-bottom: 5px; 
+}
+
+.subtitle { 
+  color: #7f8c8d; 
+  margin-bottom: 30px; 
+}
 
 /* Filtros */
 .filtros-panel {
@@ -71,15 +78,23 @@ h1 { color: #2c3e50; margin-bottom: 5px; }
   background: #7f8c8d;
 }
 
-/* Responsive */
-@media (max-width: 900px) {
-  .filtros-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .btn-limpiar {
-    width: 100%;
-  }
+/* Loading y Error */
+.loading, .error {
+  text-align: center;
+  padding: 20px;
+  border-radius: 8px;
+  margin: 20px 0;
+  font-size: 16px;
+}
+
+.loading {
+  background: #e3f2fd;
+  color: #1976d2;
+}
+
+.error {
+  background: #ffebee;
+  color: #c62828;
 }
 
 /* Tabla */
@@ -92,6 +107,7 @@ h1 { color: #2c3e50; margin-bottom: 5px; }
   width: 100%;
   border-collapse: collapse;
   background: white;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .data-grid th {
@@ -99,6 +115,7 @@ h1 { color: #2c3e50; margin-bottom: 5px; }
   color: white;
   padding: 12px;
   text-align: left;
+  font-weight: 600;
 }
 
 .data-grid td {
@@ -114,4 +131,70 @@ h1 { color: #2c3e50; margin-bottom: 5px; }
   text-align: right; 
   font-weight: bold; 
   color: #27ae60; 
+}
+
+/* Paginación */
+.paginacion {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  margin-top: 20px;
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.btn-pagina {
+  padding: 10px 20px;
+  background: #3498db;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.3s;
+}
+
+.btn-pagina:hover:not(:disabled) {
+  background: #2980b9;
+}
+
+.btn-pagina:disabled {
+  background: #bdc3c7;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.info-pagina {
+  font-weight: 600;
+  color: #2c3e50;
+  font-size: 15px;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .filtros-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .btn-limpiar {
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 10px;
+  }
+  
+  h1 {
+    font-size: 24px;
+  }
+  
+  .data-grid th,
+  .data-grid td {
+    padding: 8px;
+    font-size: 13px;
+  }
 }
